@@ -21,33 +21,145 @@ namespace HiCBO
         /// <param name="obj"></param>
         /// <param name="dr"></param>
         /// <returns>出错的列索引，如果为-1，则成功;1000:列不确定</returns>
-        public static bool UpdateObj(object obj, DataRow dr)
+        public static bool FillObject<T>(T obj, DataRowView dv)
         {
-            Type objType = obj.GetType();
+            DataRow dr = dv.Row;
+
+            // 返回对象
+            return FillObject(obj, dr);
+        }
+
+        /// <summary>
+        /// 根据DataRow的值填充数据对象。
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="dr"></param>
+        /// <returns>出错的列索引，如果为-1，则成功;1000:列不确定</returns>
+        public static bool FillObject<T>(T obj, DataRow dr)
+        {
             // 循环遍历属性集成
-            foreach (PropertyInfo objProperty in objType.GetProperties())
+            foreach (PropertyInfo it in typeof(T).GetProperties())
             {
-                int index = dr.Table.Columns.IndexOf(objProperty.Name);
-                if (index < 0)
-                {
-                    continue;
-                }
-                string value = Convert.ToString(dr[index]);
-
-                // 如果不是日期和字符串，而值为空，则跳过
-                if ((value == null || value.Trim() == "") &&
-                    objProperty.GetType() != typeof(System.String) &&
-                    objProperty.GetType() != typeof(System.DateTime))
+                // 如果该属性允许写入/含有Set的属性
+                if (!it.CanWrite)
                 {
                     continue;
                 }
 
-                if (!SetValue(obj, objProperty, value))
+                if (!dr.Table.Columns.Contains(it.Name))
                 {
-                    return false;
+                    continue;
                 }
+
+                object drObj = dr[it.Name];
+                SetValue(obj, drObj, it);
             }
             return true;
+        }
+
+        private static void SetValue(object obj, object value, PropertyInfo property)
+        {
+            Type type = property.PropertyType;
+            if (value is DBNull || value == null ||
+                (type != typeof(string) && value is string && Convert.ToString(value).Trim().Equals("")))
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    property.SetValue(obj, null);
+                    return;
+                }
+                else if (type.BaseType != typeof(System.ValueType))
+                {
+                    property.SetValue(obj, null);
+                    return;
+                }
+                return;
+            }
+
+            if (type.FullName == typeof(Int16).FullName ||
+                type.FullName == typeof(Int16?).FullName)
+            {
+                property.SetValue(obj, Convert.ToInt16(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(Int64).FullName ||
+                type.FullName == typeof(Int64?).FullName)
+            {
+                property.SetValue(obj, Convert.ToInt64(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(int).FullName ||
+                type.FullName == typeof(int?).FullName)
+            {
+                property.SetValue(obj, Convert.ToInt32(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(UInt32).FullName ||
+                type.FullName == typeof(UInt32?).FullName)
+            {
+                property.SetValue(obj, Convert.ToUInt32(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(UInt16).FullName ||
+                type.FullName == typeof(UInt16?).FullName)
+            {
+                property.SetValue(obj, Convert.ToUInt16(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(UInt64).FullName ||
+                type.FullName == typeof(UInt64?).FullName)
+            {
+                property.SetValue(obj, Convert.ToUInt64(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(DateTime).FullName ||
+                type.FullName == typeof(DateTime?).FullName)
+            {
+                property.SetValue(obj, Convert.ToDateTime(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(Decimal).FullName ||
+                type.FullName == typeof(Decimal?).FullName)
+            {
+                property.SetValue(obj, Convert.ToDecimal(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(double).FullName ||
+                type.FullName == typeof(double?).FullName)
+            {
+                property.SetValue(obj, Convert.ToDouble(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(float).FullName ||
+                type.FullName == typeof(float?).FullName)
+            {
+                property.SetValue(obj, Convert.ToSingle(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(bool).FullName ||
+                type.FullName == typeof(bool?).FullName)
+            {
+                property.SetValue(obj, Convert.ToBoolean(value), null);
+                return;
+            }
+
+            if (type.FullName == typeof(string).FullName)
+            {
+                property.SetValue(obj, value, null);
+                return;
+            }
+            property.SetValue(obj, value, null);
+            return;
         }
     }
 }
