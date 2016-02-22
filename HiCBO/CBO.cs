@@ -21,9 +21,9 @@ namespace HiCBO
         /// <param name="obj"></param>
         /// <param name="dr"></param>
         /// <returns>出错的列索引，如果为-1，则成功;1000:列不确定</returns>
-        public static bool UpdateObj(object obj, DataRow dr)
+        public static bool UpdateObj<T>(T obj, DataRow dr)
         {
-            Type objType = obj.GetType();
+            Type objType = typeof(T);
             // 循环遍历属性集成
             foreach (PropertyInfo objProperty in objType.GetProperties())
             {

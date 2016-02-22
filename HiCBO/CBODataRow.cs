@@ -79,10 +79,10 @@ namespace HiCBO
         /// <param name="objProperties">属性集合</param>
         /// <param name="arrOrdinals">索引集合</param>
         /// <returns>objType类型对象</returns>
-        private static object CreateObject(Type objType, DataRow dr, List<PropertyInfo> lst, int[] arrOrdinals)
+        private static T CreateObject<T>(DataRow dr, List<PropertyInfo> lst, int[] arrOrdinals)
         {
             // 创建objType类型的对象
-            object objObject = Activator.CreateInstance(objType);
+            T objObject = Activator.CreateInstance<T>();
 
             for (int i = 0; i < lst.Count; i++)
             {
@@ -168,13 +168,13 @@ namespace HiCBO
         /// <param name="dr">存储对象数据的DataRow</param>
         /// <param name="objType">对象类型</param>
         /// <returns>objType对象</returns>
-        public static object FillObject(DataRow dr, Type objType)
+        public static T FillObject<T>(DataRow dr) 
         {
-            object objFillObject;
+            T objFillObject;
 
             // GetPropertyInfo：返回存储某类型的所有属性的集合。
             // 取得属性集合
-            List<PropertyInfo> objProperties = GetPropertyInfo(objType);
+            List<PropertyInfo> objProperties = GetPropertyInfo(typeof(T));
 
             // GetOrdinals：返回dr属性字段索引的数组。
             // 返回索引数组
@@ -186,11 +186,11 @@ namespace HiCBO
             if (Continue)
             {
                 // CreateObject：给objType类型的对象逐个赋值并返回。
-                objFillObject = CreateObject(objType, dr, objProperties, arrOrdinals);
+                objFillObject = CreateObject<T>(dr, objProperties, arrOrdinals);
             }
             else
             {
-                objFillObject = null;
+                objFillObject = default(T);
             }
 
             // 返回对象

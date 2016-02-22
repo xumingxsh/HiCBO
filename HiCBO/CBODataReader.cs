@@ -23,23 +23,18 @@ namespace HiCBO
         /// dr.Close();
         /// </code>
         /// </example>
-        public static object FillObject(IDataReader dr, Type objType)
+        public static T FillObject<T>(IDataReader dr)
         {
-            object objFillObject;
-
             // GetPropertyInfo：返回存储某类型的所有属性的集合。
             // 取得属性集合
-            List<PropertyInfo> objProperties = GetPropertyInfo(objType);
+            List<PropertyInfo> objProperties = GetPropertyInfo(typeof(T));
 
             // GetOrdinals：返回dr属性字段索引的数组。
             // 返回索引数组
             int[] arrOrdinals = GetOrdinals(objProperties, dr);
 
             // CreateObject：给objType类型的对象逐个赋值并返回。
-            objFillObject = CreateObject(objType, dr, objProperties, arrOrdinals);
-
-            // 返回对象
-            return objFillObject;
+           return CreateObject<T>(dr, objProperties, arrOrdinals);
         }
 
         /// <summary>
@@ -90,10 +85,10 @@ namespace HiCBO
         /// <param name="objProperties">属性集合</param>
         /// <param name="arrOrdinals">索引集合</param>
         /// <returns>objType类型对象</returns>
-        private static object CreateObject(Type objType, IDataReader dr, List<PropertyInfo> lst, int[] arrOrdinals)
+        private static T CreateObject<T>(IDataReader dr, List<PropertyInfo> lst, int[] arrOrdinals)
         {
             // 创建objType类型的对象
-            object objObject = Activator.CreateInstance(objType);
+            T objObject = Activator.CreateInstance<T>();
 
             for (int i = 0; i < lst.Count; i++)
             {
