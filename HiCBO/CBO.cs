@@ -57,6 +57,28 @@ namespace HiCBO
             return true;
         }
 
+        /// <summary>
+        /// 根据属性名称，设置属性值。
+        /// </summary>
+        /// <typeparam name="T">对象类型</typeparam>
+        /// <param name="t">赋值对象</param>
+        /// <param name="val">值</param>
+        /// <param name="propertyName">属性名称</param>
+        /// <returns>true：成功；false：属性不存在</returns>
+        public static bool SetValue<T>(T t, object val, string propertyName)
+        {
+            // 循环遍历属性集成
+            foreach (PropertyInfo it in typeof(T).GetProperties())
+            {
+                if (propertyName.ToLower().Equals(it.Name.ToLower()))
+                {
+                    SetValue(t, val, it);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private static void SetValue(object obj, object value, PropertyInfo property)
         {
             Type type = property.PropertyType;
