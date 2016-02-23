@@ -27,44 +27,39 @@ namespace HiCBOTest
             public string NotContains { get; set; }
         }
 
-        private DataRow GetDataRow()
-        {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Str");
-            dt.Columns.Add("DT_val");
-            dt.Columns.Add("DTNull_val");
-            dt.Columns.Add("Int32_val");
-            dt.Columns.Add("Int32Null_val");
-            dt.Columns.Add("Int16_val");
-            dt.Columns.Add("Int64_val");
-            dt.Columns.Add("UInt32_val");
-            dt.Columns.Add("UInt16_val");
-            dt.Columns.Add("UInt64_val");
-            dt.Columns.Add("Double_val");
-            dt.Columns.Add("Decimal_val");
-            dt.Columns.Add("Float_val");
-            return dt.NewRow();
-        }
+        /// <summary>
+        /// 正常测试，设置属性成功，并获得期望结果
+        /// </summary>
         [TestMethod]
-        public void TestMethod_FillObjectDataRow_1()
+        public void TestMethod_FillObject_Normal()
+        {
+            CCBOTest obj = new CCBOTest();
+            DataRow dr = GetDataRow();
+            SetData(dr);
+            CBO.FillObject(obj, dr);
+            AssertObj(obj);
+        }
+        /// <summary>
+        /// DataRow中无数据，设置属性成功，并获得期望结果
+        /// </summary>
+        [TestMethod]
+        public void TestMethod_FillObject_DataRowNoData()
+        {
+            DataRow dr = GetDataRow();
+            CCBOTest obj = new CCBOTest();
+            CBO.FillObject(obj, dr);
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void TestMethod_FillObject_Exception()
         {
             DataRow dr = GetDataRow();
             CCBOTest obj = new CCBOTest();
             CBO.FillObject(obj, dr);
             Assert.IsTrue(true);
 
-            dr["str"] = "test";
-            dr["dTNull_val"] = "";
-            dr["Int32_val"] = 3;
-            dr["int32Null_val"] = "";
-            dr["Int16_val"] = 2;
-            dr["Int64_val"] = "1";
-            dr["UInt32_val"] = 5;
-            dr["UInt16_val"] = 7;
-            dr["UInt64_val"] = 23;
-            dr["Double_val"] = 9;
-            dr["Decimal_val"] = "7";
-            dr["Float_val"] = "67";
+            SetData(dr);
 
             dr["DT_val"] = "2015-02-34";
             try
@@ -103,12 +98,69 @@ namespace HiCBOTest
                 ex.ToString();
                 Assert.IsTrue(true);
             }
-            dr["UInt32_val"] = "3";
-            CBO.FillObject(obj, dr);
+        }
 
-            dr["DTNull_val"] = "2015-02-04 16:00";
+
+        [TestMethod]
+        public void TestMethod_FillObject_Delegate()
+        {
+            CCBOTest obj = new CCBOTest();
+            DataRow dr = GetDataRow();
+            SetData(dr);
+            CBO.FillObject(obj, (ref object objVal, string name) =>
+            {
+                if (!dr.Table.Columns.Contains(name))
+                {
+                    return false;
+                }
+                objVal = dr[name];
+                return true;
+            });
+            AssertObj(obj);
+        }
+
+        private DataRow GetDataRow()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Str");
+            dt.Columns.Add("DT_val");
+            dt.Columns.Add("DTNull_val");
+            dt.Columns.Add("Int32_val");
+            dt.Columns.Add("Int32Null_val");
+            dt.Columns.Add("Int16_val");
+            dt.Columns.Add("Int64_val");
+            dt.Columns.Add("UInt32_val");
+            dt.Columns.Add("UInt16_val");
+            dt.Columns.Add("UInt64_val");
+            dt.Columns.Add("Double_val");
+            dt.Columns.Add("Decimal_val");
+            dt.Columns.Add("Float_val");
+            DataRow dr = dt.NewRow();
+            return dr;
+        }
+
+        private void SetData(DataRow dr)
+        {
+
+            dr["str"] = "test";
+            dr["dTNull_val"] = "";
+            dr["Int32_val"] = 3;
+            dr["int32Null_val"] = "";
+            dr["Int16_val"] = 2;
+            dr["Int64_val"] = "1";
+            dr["UInt32_val"] = 5;
+            dr["UInt16_val"] = 7;
+            dr["UInt64_val"] = 23;
+            dr["Double_val"] = 9;
+            dr["Decimal_val"] = "7";
+            dr["Float_val"] = "67";
+            dr["DT_val"] = "2015-02-03";
+        }
+
+        private void AssertObj(CCBOTest obj)
+        {
             Assert.IsTrue(obj.DTNull_val == null &&
-                obj.Int32_val == 3 && obj.Int16_val == 2 && obj.Int64_val == 1 && obj.UInt32_val == 3 &&
+                obj.Int32_val == 3 && obj.Int16_val == 2 && obj.Int64_val == 1 && obj.UInt32_val == 5 &&
                 obj.UInt16_val == 7 && obj.UInt64_val == 23 && obj.Double_val == 9 && obj.Decimal_val == 7 &&
                 obj.Float_val == 67 && obj.Int32Null_val == null &&
                 obj.DT_val == Convert.ToDateTime("2015-02-03"));
