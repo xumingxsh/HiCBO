@@ -213,10 +213,54 @@ namespace HiCBO
 
             if (type.FullName == typeof(string).FullName)
             {
-                property.SetValue(obj, value, null);
+                if (value is String)
+                {
+                    property.SetValue(obj, value, null);
+                }
+                else
+                {
+                    property.SetValue(obj, Convert.ToString(value), null);
+                }
                 return;
             }
-            property.SetValue(obj, value, null);
+
+            if (type.BaseType == typeof(System.Enum))
+            {
+                if (value is DBNull || value == null)
+                {
+                    return;
+                }
+
+                try
+                {
+                    int val = Convert.ToInt32(value);
+                    property.SetValue(obj, Enum.ToObject(type, val), null);
+                }
+                catch(Exception ex)
+                {
+                    ex.ToString();
+                    return;
+                }
+                return;
+            }
+
+            try
+            {
+                property.SetValue(obj, value, null);
+            }
+            catch(Exception ex)
+            {
+                ex.ToString();
+                try
+                {
+                    property.SetValue(obj, value, null);
+                }
+                catch (Exception e)
+                {
+                    e.ToString();
+                    property.SetValue(obj, null, null);
+                }
+            }
             return;
         }
     }
