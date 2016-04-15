@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiCBO", "HiCBO\HiCBO.csproj", "{2328249C-1C76-4BC4-9AC8-CB805C8BB033}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiCBOTest", "HiCBOTest\HiCBOTest.csproj", "{99582EB0-3D34-493E-8A37-B4FF320F6D4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		{2328249C-1C76-4BC4-9AC8-CB805C8BB033}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2328249C-1C76-4BC4-9AC8-CB805C8BB033}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2328249C-1C76-4BC4-9AC8-CB805C8BB033}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99582EB0-3D34-493E-8A37-B4FF320F6D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99582EB0-3D34-493E-8A37-B4FF320F6D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99582EB0-3D34-493E-8A37-B4FF320F6D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99582EB0-3D34-493E-8A37-B4FF320F6D4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using HiCBO;
 
-namespace HiCBOTest
+namespace HiCBOTest.Test
 {
     [TestClass]
     public class UnitTestCBO
@@ -115,6 +115,23 @@ namespace HiCBOTest
                 }
                 objVal = dr[name];
                 return true;
+            });
+            AssertObj(obj);
+        }
+
+        [TestMethod]
+        public void TestMethod_FillObject_Delegate2()
+        {
+            CCBOTest obj = new CCBOTest();
+            DataRow dr = GetDataRow();
+            SetData(dr);
+            CBO.FillObject(obj, (string name) =>
+            {
+                if (!dr.Table.Columns.Contains(name))
+                {
+                    return null;
+                }
+                return dr[name];
             });
             AssertObj(obj);
         }
